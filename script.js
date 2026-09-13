@@ -120,7 +120,7 @@ function toggleRepuestos() {
 }
 
 // ============================================
-// CREAR ITEM - CAMPO IMPORTE VACÍO
+// CREAR ITEM
 // ============================================
 function crearItem(tipo) {
     const div = document.createElement('div');
@@ -192,7 +192,6 @@ function recogerDatos() {
     datos.numero = numeroInput;
     datos.fecha = document.getElementById('fecha').value || new Date().toLocaleDateString('es-BO');
     
-    // Recoger servicios
     datos.servicios = [];
     document.querySelectorAll('#servicios-container .item-row').forEach(row => {
         const cantidad = parseInt(row.querySelector('.cantidad')?.value || 1);
@@ -207,7 +206,6 @@ function recogerDatos() {
         }
     });
     
-    // Recoger repuestos
     datos.repuestos = [];
     if (repuestosVisible) {
         document.querySelectorAll('#repuestos-container .item-row').forEach(row => {
@@ -347,7 +345,7 @@ function numeroALetrasEntero(num) {
 }
 
 // ============================================
-// GENERAR HTML PROFORMA - RUTAS SIN /recursos/
+// GENERAR HTML PROFORMA
 // ============================================
 function generarHTMLProforma(datos) {
     const totalServicios = datos.servicios.reduce((s, i) => s + limpiarNumero(i.importe), 0);
@@ -553,7 +551,129 @@ function nuevaProforma() {
 }
 
 // ============================================
-// IMPRIMIR
+// IMPRIMIR - Genera un HTML de impresión completo (SIN depender del navegador)
+// ============================================
+function generarHTMLImpresion() {
+    return `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro-Forma ${numeroProforma}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body {
+            background: #ffffff;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            color: #1a2332;
+            line-height: 1.5;
+        }
+        
+        body {
+            padding: 15mm 15mm;
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+        }
+        
+        /* ===== HEADER ===== */
+        .proforma-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 14px;
+            border-bottom: 3px double #1a3a6b;
+            margin-bottom: 16px;
+        }
+        
+        .empresa { display: flex; align-items: center; }
+        .empresa h1 { color: #1a3a6b; font-size: 22px; font-weight: 800; margin: 0; letter-spacing: 0.5px; }
+        .slogan { color: #4a5568; font-style: italic; font-size: 11px; margin: 3px 0; max-width: 480px; }
+        .direccion { color: #718096; font-size: 11px; margin: 1px 0; }
+        .header-right { text-align: right; flex-shrink: 0; margin-left: 20px; }
+        .header-right h2 { color: #1a3a6b; font-size: 18px; font-weight: 800; margin: 0; }
+        .numero { font-size: 15px; color: #2a5298; font-weight: 700; margin-top: 4px; }
+        .fecha-text { color: #4a5568; margin-top: 3px; font-size: 12px; }
+        
+        /* ===== INFO CLIENTE ===== */
+        .info-cliente {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 30px;
+            margin-bottom: 18px;
+            padding: 12px 16px;
+            background: #f7f9fc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .info-cliente .item { display: flex; gap: 5px; font-size: 12px; }
+        .info-cliente .label { font-weight: 600; color: #1a3a6b; white-space: nowrap; }
+        .info-cliente .value { color: #2d3748; word-break: break-word; }
+        
+        /* ===== TABLAS ===== */
+        table { width: 100%; border-collapse: collapse; }
+        table th { padding: 8px 10px; text-align: left; font-weight: 600; font-size: 12px; }
+        table td { padding: 6px 10px; text-align: left; font-size: 13px; }
+        
+        /* ===== TOTAL LETRAS ===== */
+        .total-letras {
+            background: #edf2f7;
+            padding: 10px 14px;
+            border-left: 4px solid #2a5298;
+            margin: 16px 0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .total-letras strong { color: #1a3a6b; }
+        
+        /* ===== FIRMA ===== */
+        .firmas-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            page-break-inside: avoid;
+        }
+        .firma { text-align: center; width: 300px; }
+        .firma p { margin: 3px 0; font-size: 12px; color: #2d3748; }
+        .firma .cargo { color: #718096; font-size: 11px; }
+        
+        /* ===== IMPRESIÓN ===== */
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
+        }
+        
+        @media print {
+            html, body {
+                width: auto;
+                min-height: auto;
+                padding: 0;
+            }
+            
+            body {
+                padding: 0;
+            }
+            
+            .no-print { display: none !important; }
+            
+            .info-cliente { background: #f7f9fc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .total-letras { background: #edf2f7 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            table thead { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            table tfoot { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+    ${proformaHTML.replace(/<img src="logo\.png"/g, `<img src="${window.location.origin}${window.location.pathname.replace(/\/[^\/]*$/, '/')}logo.png"`).replace(/<img src="firma\.png"/g, `<img src="${window.location.origin}${window.location.pathname.replace(/\/[^\/]*$/, '/')}firma.png"`)}
+</body>
+</html>`;
+}
+
+// ============================================
+// IMPRIMIR - Función principal
 // ============================================
 function imprimirProforma() {
     if (!proformaHTML) {
@@ -567,183 +687,44 @@ function imprimirProforma() {
         return;
     }
     
-    ventana.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Pro-Forma ${numeroProforma}</title>
-            <style>
-                * { margin: 0; padding: 0; box-sizing: border-box; }
-                body {
-                    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-                    background: #ffffff;
-                    padding: 25px 30px;
-                    max-width: 900px;
-                    margin: 0 auto;
-                    color: #1a2332;
-                    line-height: 1.5;
-                }
-                .proforma-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 3px double #1a3a6b; margin-bottom: 16px; }
-                .empresa { display: flex; align-items: center; }
-                .empresa h1 { color: #1a3a6b; font-size: 22px; font-weight: 800; margin: 0; }
-                .slogan { color: #4a5568; font-style: italic; font-size: 11px; margin: 3px 0; max-width: 480px; }
-                .direccion { color: #718096; font-size: 11px; margin: 1px 0; }
-                .header-right { text-align: right; flex-shrink: 0; margin-left: 20px; }
-                .header-right h2 { color: #1a3a6b; font-size: 18px; font-weight: 800; margin: 0; }
-                .numero { font-size: 15px; color: #2a5298; font-weight: 700; margin-top: 4px; }
-                .fecha-text { color: #4a5568; margin-top: 3px; font-size: 12px; }
-                .info-cliente { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 30px; margin-bottom: 18px; padding: 12px 16px; background: #f7f9fc; border-radius: 6px; border: 1px solid #e2e8f0; }
-                .info-cliente .item { display: flex; gap: 5px; font-size: 12px; }
-                .info-cliente .label { font-weight: 600; color: #1a3a6b; }
-                .info-cliente .value { color: #2d3748; }
-                table { width: 100%; border-collapse: collapse; }
-                table th { padding: 8px 10px; text-align: left; font-weight: 600; font-size: 12px; }
-                table td { padding: 6px 10px; text-align: left; font-size: 13px; }
-                .total-letras { background: #edf2f7; padding: 10px 14px; border-left: 4px solid #2a5298; margin: 16px 0; border-radius: 4px; font-size: 13px; }
-                .total-letras strong { color: #1a3a6b; }
-                @media print { body { padding: 12px 18px; max-width: 100%; } @page { size: A4; margin: 12mm 15mm; } }
-            </style>
-        </head>
-        <body>${proformaHTML}</body>
-        </html>
-    `);
+    ventana.document.write(generarHTMLImpresion());
     ventana.document.close();
-    setTimeout(() => ventana.print(), 500);
+    
+    // Esperar a que carguen las imágenes y luego imprimir
+    ventana.onload = function() {
+        setTimeout(() => {
+            ventana.focus();
+            ventana.print();
+        }, 600);
+    };
 }
 
 // ============================================
-// DESCARGAR PDF - RUTAS SIN /recursos/
+// DESCARGAR PDF
 // ============================================
-async function descargarPDF() {
+function descargarPDF() {
     if (!proformaHTML) {
         mostrarNotificacion('No hay proforma para descargar', 'warning');
         return;
     }
     
-    mostrarNotificacion('📥 Generando PDF...', 'info');
+    mostrarNotificacion('📥 Abriendo vista de impresión... Selecciona "Guardar como PDF"', 'info');
     
-    try {
-        const logoBase64 = await convertirImagenABase64('logo.png');
-        const firmaBase64 = await convertirImagenABase64('firma.png');
-        
-        let htmlFinal = proformaHTML;
-        if (logoBase64) {
-            htmlFinal = htmlFinal.replace(/src="logo\.png"/g, `src="${logoBase64}"`);
-        }
-        if (firmaBase64) {
-            htmlFinal = htmlFinal.replace(/src="firma\.png"/g, `src="${firmaBase64}"`);
-        }
-        
-        const tempDiv = document.createElement('div');
-        tempDiv.id = 'pdf-temp-container';
-        tempDiv.style.cssText = `
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 800px;
-            background: #ffffff;
-            padding: 25px 30px;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            color: #1a2332;
-            line-height: 1.5;
-            z-index: 9999;
-            box-shadow: 0 0 0 9999px rgba(255,255,255,1);
-        `;
-        tempDiv.innerHTML = htmlFinal;
-        document.body.appendChild(tempDiv);
-        
-        await esperarImagenes(tempDiv);
-        await new Promise(r => setTimeout(r, 300));
-        
-        const anchoDiv = tempDiv.scrollWidth;
-        const altoDiv = tempDiv.scrollHeight;
-        
-        const opciones = {
-            margin: [5, 5, 5, 5],
-            filename: `ProForma_${numeroProforma || 'MejillonesMotors'}.pdf`,
-            image: { type: 'jpeg', quality: 0.95 },
-            html2canvas: { 
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                letterRendering: true,
-                backgroundColor: '#ffffff',
-                logging: false,
-                width: anchoDiv,
-                height: altoDiv,
-                windowWidth: anchoDiv,
-                windowHeight: altoDiv,
-                scrollX: 0,
-                scrollY: 0,
-                x: 0,
-                y: 0
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait',
-                compress: true
-            },
-            pagebreak: { 
-                mode: ['css'],
-                avoid: ['tr', 'h3']
-            }
-        };
-        
-        await html2pdf().set(opciones).from(tempDiv).save();
-        
-        document.body.removeChild(tempDiv);
-        mostrarNotificacion('✅ PDF descargado correctamente', 'success');
-        
-    } catch (error) {
-        console.error('Error al generar PDF:', error);
-        const tempDiv = document.getElementById('pdf-temp-container');
-        if (tempDiv && tempDiv.parentNode) document.body.removeChild(tempDiv);
-        mostrarNotificacion('Error al generar el PDF: ' + error.message, 'error');
+    const ventana = window.open('', '_blank');
+    if (!ventana) {
+        mostrarNotificacion('Permita ventanas emergentes para descargar el PDF', 'warning');
+        return;
     }
-}
-
-// ============================================
-// FUNCIONES AUXILIARES
-// ============================================
-function convertirImagenABase64(ruta) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.onload = function() {
-            try {
-                const canvas = document.createElement('canvas');
-                canvas.width = img.naturalWidth;
-                canvas.height = img.naturalHeight;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                const dataURL = canvas.toDataURL('image/png');
-                resolve(dataURL);
-            } catch (e) {
-                console.warn('No se pudo convertir imagen:', ruta, e);
-                resolve(null);
-            }
-        };
-        img.onerror = function() {
-            console.warn('No se pudo cargar imagen:', ruta);
-            resolve(null);
-        };
-        img.src = ruta;
-    });
-}
-
-function esperarImagenes(container) {
-    const imagenes = container.querySelectorAll('img');
-    const promesas = Array.from(imagenes).map(img => {
-        if (img.complete && img.naturalHeight > 0) return Promise.resolve();
-        return new Promise(resolve => {
-            img.onload = resolve;
-            img.onerror = resolve;
-            setTimeout(resolve, 2000);
-        });
-    });
-    return Promise.all(promesas);
+    
+    ventana.document.write(generarHTMLImpresion());
+    ventana.document.close();
+    
+    ventana.onload = function() {
+        setTimeout(() => {
+            ventana.focus();
+            ventana.print();
+        }, 600);
+    };
 }
 
 // ============================================
