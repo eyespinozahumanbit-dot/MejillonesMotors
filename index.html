@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mejillones Motors - Sistema de Pro-Forma</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="recursos/logo.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo-placeholder">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="header-title">
+                    <h1>MEJILLONES MOTORS</h1>
+                    <p class="subtitle">Sistema de Pro-Forma</p>
+                </div>
+            </div>
+            <button class="btn-tema" id="btnTema" onclick="cambiarTema()">
+                <i class="fas fa-moon"></i>
+                <span>Modo Oscuro</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- ===== VISTA 1: FORMULARIO ===== -->
+        <div id="vista-formulario" class="view active">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-clipboard-list"></i> Datos del Vehículo</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Número de Pro-Forma <span class="required">*</span></label>
+                        <input type="text" id="numero_proforma" placeholder="Ej: 002520" maxlength="6">
+                        <small class="hint">Puede editarlo manualmente</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="text" id="fecha" placeholder="DD-MM-YYYY">
+                    </div>
+                    <div class="form-group">
+                        <label>Propietario <span class="required">*</span></label>
+                        <input type="text" id="propietario" placeholder="Nombre del propietario">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono <span class="required">*</span></label>
+                        <input type="text" id="telefono" placeholder="Número de teléfono">
+                    </div>
+                    <div class="form-group">
+                        <label>Marca <span class="required">*</span></label>
+                        <input type="text" id="marca" placeholder="Marca del vehículo">
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo <span class="required">*</span></label>
+                        <input type="text" id="modelo" placeholder="Modelo del vehículo">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Vehículo <span class="required">*</span></label>
+                        <input type="text" id="tipo_vehiculo" placeholder="Ej: Sedán, SUV">
+                    </div>
+                    <div class="form-group">
+                        <label>Placa <span class="required">*</span></label>
+                        <input type="text" id="placa" placeholder="Número de placa">
+                    </div>
+                    <div class="form-group">
+                        <label>Año <span class="required">*</span></label>
+                        <input type="text" id="anio" placeholder="Año del vehículo">
+                    </div>
+                    <div class="form-group">
+                        <label>Color <span class="required">*</span></label>
+                        <input type="text" id="color" placeholder="Color del vehículo">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-tools"></i> Detalle de Servicios</h2>
+                </div>
+                <div id="servicios-container"></div>
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="agregarServicio()">
+                        <i class="fas fa-plus"></i> Agregar Servicio
+                    </button>
+                    <button class="btn btn-danger" onclick="eliminarTodosServicios()">
+                        <i class="fas fa-trash"></i> Eliminar Todos
+                    </button>
+                    <button class="btn btn-warning" onclick="toggleRepuestos()">
+                        <i class="fas fa-cog"></i> <span id="btnRepuestosText">Mostrar Repuestos</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="repuestos-section" class="card" style="display: none;">
+                <div class="card-header">
+                    <h2><i class="fas fa-grip-lines"></i> Detalle de Repuestos</h2>
+                </div>
+                <div id="repuestos-container"></div>
+                <div class="button-group">
+                    <button class="btn btn-warning" onclick="agregarRepuesto()">
+                        <i class="fas fa-plus"></i> Agregar Repuesto
+                    </button>
+                    <button class="btn btn-secondary" onclick="toggleRepuestos()">
+                        <i class="fas fa-eye-slash"></i> Ocultar Repuestos
+                    </button>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary btn-large" onclick="finalizarProforma()">
+                    <i class="fas fa-file-alt"></i> Finalizar Pro-Forma
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== VISTA 2: PREVISUALIZACIÓN ===== -->
+        <div id="vista-previsualizacion" class="view">
+            <div class="preview-container">
+                <div id="proforma-papel" class="proforma-papel"></div>
+            </div>
+            <div class="actions preview-actions">
+                <button class="btn btn-secondary" onclick="volverAlFormulario()">
+                    <i class="fas fa-arrow-left"></i> Modificar Datos
+                </button>
+                <button class="btn btn-success" onclick="nuevaProforma()">
+                    <i class="fas fa-plus"></i> Nueva Pro-Forma
+                </button>
+                <button class="btn btn-info" onclick="descargarPDF()">
+                    <i class="fas fa-file-pdf"></i> Descargar PDF
+                </button>
+                <button class="btn btn-primary" onclick="imprimirProforma()">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,878 @@
+/* ============================================
+   VARIABLES
+   ============================================ */
+:root {
+    --primary: #1a3a6b;
+    --primary-hover: #234a85;
+    --primary-light: #2a5298;
+    
+    --success: #059669;
+    --success-hover: #047857;
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --warning: #d97706;
+    --warning-hover: #b45309;
+    --secondary: #6b7280;
+    --secondary-hover: #4b5563;
+    --info: #0891b2;
+    --info-hover: #0e7490;
+    
+    --bg: #f1f3f6;
+    --bg-card: #ffffff;
+    --bg-input: #ffffff;
+    --bg-hover: #f3f4f6;
+    --bg-alt: #f8f9fa;
+    
+    --text: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #9ca3af;
+    --text-inverse: #ffffff;
+    
+    --border: #e5e7eb;
+    --border-focus: #1a3a6b;
+    --border-hover: #d1d5db;
+    
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.08);
+    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.10);
+    
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 16px;
+    
+    --header-height: 64px;
+    --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   MODO OSCURO
+   ============================================ */
+body.dark-mode {
+    --primary: #2a5298;
+    --primary-hover: #3a6bc4;
+    --primary-light: #4a7abe;
+    
+    --bg: #0b111d;
+    --bg-card: #141b2b;
+    --bg-input: #1a2235;
+    --bg-hover: #1f2840;
+    --bg-alt: #111927;
+    
+    --text: #e8edf5;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    --border: #1e2d45;
+    --border-focus: #4a7abe;
+    --border-hover: #2a3d5c;
+    
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.7);
+}
+
+/* ============================================
+   RESET
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-top: var(--header-height);
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background var(--transition), color var(--transition);
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.app-header {
+    background: linear-gradient(135deg, #1a3a6b, #2a5298);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: var(--header-height);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: background var(--transition);
+}
+
+body.dark-mode .app-header {
+    background: linear-gradient(135deg, #0b111d, #16203a);
+    border-bottom: 1px solid var(--border);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-placeholder {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.header-title h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.header-title .subtitle {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.btn-tema {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: var(--radius-sm);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.btn-tema:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.btn-tema i {
+    font-size: 14px;
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+    min-height: 38px;
+    border: 1px solid transparent;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn i {
+    font-size: 13px;
+}
+
+.btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+.btn-success { background: var(--success); color: white; border-color: var(--success); }
+.btn-success:hover { background: var(--success-hover); border-color: var(--success-hover); }
+
+.btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-danger:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
+
+.btn-warning { background: var(--warning); color: white; border-color: var(--warning); }
+.btn-warning:hover { background: var(--warning-hover); border-color: var(--warning-hover); }
+
+.btn-secondary { background: var(--secondary); color: white; border-color: var(--secondary); }
+.btn-secondary:hover { background: var(--secondary-hover); border-color: var(--secondary-hover); }
+
+.btn-info { background: var(--info); color: white; border-color: var(--info); }
+.btn-info:hover { background: var(--info-hover); border-color: var(--info-hover); }
+
+.btn-large {
+    padding: 12px 32px;
+    font-size: 15px;
+    min-height: 46px;
+    border-radius: var(--radius);
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px;
+}
+
+.view {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.view.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    transition: all var(--transition);
+}
+
+.card-header {
+    margin-bottom: 20px;
+}
+
+.card-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+body.dark-mode .card-header h2 {
+    color: #7aaeff;
+}
+
+.card-header h2 i {
+    font-size: 17px;
+    opacity: 0.85;
+}
+
+/* ============================================
+   FORMULARIO
+   ============================================ */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.form-group label .required {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--bg-input);
+    color: var(--text);
+    transition: all var(--transition);
+    width: 100%;
+    min-height: 38px;
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+    border-color: var(--border-hover);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.12);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.form-group .hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 48px;
+    line-height: 1.5;
+}
+
+/* ============================================
+   ITEMS (SERVICIOS Y REPUESTOS)
+   ============================================ */
+.item-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 120px 36px;
+    gap: 10px;
+    align-items: start;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    transition: all var(--transition);
+}
+
+.item-row:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-hover);
+}
+
+.item-row.service {
+    border-left: 3px solid var(--primary-light);
+}
+
+.item-row.repuesto {
+    border-left: 3px solid var(--warning);
+}
+
+.item-row .form-group {
+    gap: 3px;
+}
+
+.item-row .form-group label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.item-row .form-group input,
+.item-row .form-group textarea {
+    padding: 6px 10px;
+    font-size: 13px;
+    min-height: 34px;
+}
+
+.item-row .form-group textarea {
+    min-height: 38px;
+    max-height: 80px;
+}
+
+.item-row .btn-remove {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all var(--transition);
+    margin-top: 20px;
+    flex-shrink: 0;
+}
+
+.item-row .btn-remove:hover {
+    background: rgba(220, 38, 38, 0.1);
+    color: var(--danger);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+/* ============================================
+   BUTTON GROUPS
+   ============================================ */
+.button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+.preview-actions {
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 24px;
+}
+
+/* ============================================
+   PREVISUALIZACIÓN
+   ============================================ */
+.preview-container {
+    background: var(--bg);
+    padding: 24px;
+    min-height: calc(100vh - var(--header-height) - 100px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    border-radius: var(--radius);
+    transition: background var(--transition);
+}
+
+body.dark-mode .preview-container {
+    background: transparent;
+}
+
+.proforma-papel {
+    background: #ffffff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-xl);
+    padding: 40px 48px;
+    width: 100%;
+    max-width: 900px;
+    min-height: 600px;
+    color: #1a2332;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    transition: box-shadow var(--transition);
+}
+
+/* Estilos internos de la proforma */
+.proforma-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 14px;
+    border-bottom: 3px double #1a3a6b;
+    margin-bottom: 16px;
+}
+
+.empresa {
+    display: flex;
+    align-items: center;
+}
+
+.empresa h1 {
+    color: #1a3a6b;
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.slogan {
+    color: #4a5568;
+    font-style: italic;
+    font-size: 11px;
+    margin: 3px 0;
+    max-width: 480px;
+}
+
+.direccion {
+    color: #718096;
+    font-size: 11px;
+    margin: 1px 0;
+}
+
+.header-right {
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: 20px;
+}
+
+.header-right h2 {
+    color: #1a3a6b;
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.numero {
+    font-size: 15px;
+    color: #2a5298;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.fecha-text {
+    color: #4a5568;
+    margin-top: 3px;
+    font-size: 12px;
+}
+
+.info-cliente {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 30px;
+    margin-bottom: 18px;
+    padding: 12px 16px;
+    background: #f7f9fc;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.info-cliente .item {
+    display: flex;
+    gap: 5px;
+    font-size: 12px;
+}
+
+.info-cliente .label {
+    font-weight: 600;
+    color: #1a3a6b;
+    white-space: nowrap;
+}
+
+.info-cliente .value {
+    color: #2d3748;
+    word-break: break-word;
+}
+
+.proforma-papel table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.proforma-papel table th {
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.proforma-papel table td {
+    padding: 6px 10px;
+    text-align: left;
+    font-size: 13px;
+}
+
+.proforma-papel .total-letras {
+    background: #edf2f7;
+    padding: 10px 14px;
+    border-left: 4px solid #2a5298;
+    margin: 16px 0;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.proforma-papel .total-letras strong {
+    color: #1a3a6b;
+}
+
+.proforma-papel .firmas {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.proforma-papel .firma {
+    text-align: center;
+}
+
+.proforma-papel .firma p {
+    margin: 3px 0;
+    font-size: 12px;
+    color: #2d3748;
+}
+
+.proforma-papel .firma .cargo {
+    color: #718096;
+    font-size: 11px;
+}
+
+/* ============================================
+   NOTIFICACIONES
+   ============================================ */
+.notification {
+    position: fixed;
+    top: calc(var(--header-height) + 16px);
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-lg);
+    animation: slideInRight 0.3s ease;
+    max-width: 400px;
+    transition: opacity 0.3s ease;
+}
+
+.notification-success { background: var(--success); }
+.notification-error { background: var(--danger); }
+.notification-warning { background: var(--warning); }
+.notification-info { background: var(--primary); }
+
+@keyframes slideInRight {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    :root {
+        --header-height: 58px;
+    }
+
+    .header-content {
+        padding: 0 14px;
+    }
+
+    .header-title h1 {
+        font-size: 15px;
+    }
+
+    .header-title .subtitle {
+        font-size: 9px;
+    }
+
+    .logo-placeholder {
+        width: 34px;
+        height: 34px;
+        font-size: 15px;
+    }
+
+    .btn-tema span {
+        display: none;
+    }
+
+    .btn-tema {
+        padding: 8px 12px;
+    }
+
+    .main-content {
+        padding: 16px 12px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .card {
+        padding: 18px 16px;
+        border-radius: var(--radius-sm);
+    }
+
+    .card-header {
+        margin-bottom: 14px;
+    }
+
+    .card-header h2 {
+        font-size: 14px;
+    }
+
+    .item-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .item-row .btn-remove {
+        margin-top: 0;
+        justify-self: end;
+        width: 28px;
+        height: 28px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .button-group .btn {
+        width: 100%;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions .btn {
+        width: 100%;
+    }
+
+    .btn-large {
+        padding: 10px 24px;
+        font-size: 14px;
+    }
+
+    .preview-container {
+        padding: 12px;
+    }
+
+    .proforma-papel {
+        padding: 20px 18px;
+        border-radius: var(--radius-sm);
+    }
+
+    .proforma-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .header-right {
+        text-align: left;
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .info-cliente {
+        grid-template-columns: 1fr;
+        padding: 10px 12px;
+    }
+
+    .empresa h1 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --header-height: 52px;
+    }
+
+    .header-title h1 {
+        font-size: 13px;
+    }
+
+    .header-title .subtitle {
+        font-size: 8px;
+    }
+
+    .logo-placeholder {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
+    }
+
+    .btn {
+        padding: 8px 14px;
+        font-size: 12px;
+        min-height: 34px;
+    }
+
+    .proforma-papel {
+        padding: 14px 12px;
+    }
+
+    .proforma-papel table th,
+    .proforma-papel table td {
+        padding: 5px 6px;
+        font-size: 11px;
+    }
+
+    .notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+    .btn:hover { transform: none !important; }
+}
