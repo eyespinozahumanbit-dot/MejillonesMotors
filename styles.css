@@ -507,7 +507,7 @@ body.dark-mode .preview-container {
 }
 
 /* Estilos internos de la proforma */
-.proforma-header {
+.proforma-papel .proforma-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -516,12 +516,12 @@ body.dark-mode .preview-container {
     margin-bottom: 16px;
 }
 
-.empresa {
+.proforma-papel .empresa {
     display: flex;
     align-items: center;
 }
 
-.empresa h1 {
+.proforma-papel .empresa h1 {
     color: #1a3a6b;
     font-size: 22px;
     font-weight: 800;
@@ -529,7 +529,7 @@ body.dark-mode .preview-container {
     letter-spacing: 0.5px;
 }
 
-.slogan {
+.proforma-papel .slogan {
     color: #4a5568;
     font-style: italic;
     font-size: 11px;
@@ -537,39 +537,39 @@ body.dark-mode .preview-container {
     max-width: 480px;
 }
 
-.direccion {
+.proforma-papel .direccion {
     color: #718096;
     font-size: 11px;
     margin: 1px 0;
 }
 
-.header-right {
+.proforma-papel .header-right {
     text-align: right;
     flex-shrink: 0;
     margin-left: 20px;
 }
 
-.header-right h2 {
+.proforma-papel .header-right h2 {
     color: #1a3a6b;
     font-size: 18px;
     font-weight: 800;
     margin: 0;
 }
 
-.numero {
+.proforma-papel .numero {
     font-size: 15px;
     color: #2a5298;
     font-weight: 700;
     margin-top: 4px;
 }
 
-.fecha-text {
+.proforma-papel .fecha-text {
     color: #4a5568;
     margin-top: 3px;
     font-size: 12px;
 }
 
-.info-cliente {
+.proforma-papel .info-cliente {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4px 30px;
@@ -580,19 +580,19 @@ body.dark-mode .preview-container {
     border: 1px solid #e2e8f0;
 }
 
-.info-cliente .item {
+.proforma-papel .info-cliente .item {
     display: flex;
     gap: 5px;
     font-size: 12px;
 }
 
-.info-cliente .label {
+.proforma-papel .info-cliente .label {
     font-weight: 600;
     color: #1a3a6b;
     white-space: nowrap;
 }
 
-.info-cliente .value {
+.proforma-papel .info-cliente .value {
     color: #2d3748;
     word-break: break-word;
 }
@@ -803,23 +803,23 @@ body.dark-mode .preview-container {
         border-radius: var(--radius-sm);
     }
 
-    .proforma-header {
+    .proforma-papel .proforma-header {
         flex-direction: column;
         gap: 10px;
     }
 
-    .header-right {
+    .proforma-papel .header-right {
         text-align: left;
         margin-left: 0;
         width: 100%;
     }
 
-    .info-cliente {
+    .proforma-papel .info-cliente {
         grid-template-columns: 1fr;
         padding: 10px 12px;
     }
 
-    .empresa h1 {
+    .proforma-papel .empresa h1 {
         font-size: 18px;
     }
 }

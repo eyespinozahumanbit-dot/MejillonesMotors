@@ -120,7 +120,7 @@ function toggleRepuestos() {
 }
 
 // ============================================
-// CREAR ITEM - CAMPO IMPORTE VACÍO (sin 0.00 por defecto)
+// CREAR ITEM - CAMPO IMPORTE VACÍO
 // ============================================
 function crearItem(tipo) {
     const div = document.createElement('div');
@@ -150,7 +150,6 @@ function crearItem(tipo) {
     const importeInput = div.querySelector('.importe');
     importeInput.addEventListener('blur', function() {
         let valor = this.value.replace(/,/g, '.').trim();
-        // Si está vacío, dejar vacío (se tomará como 0)
         if (valor === '') {
             this.value = '';
             return;
@@ -167,7 +166,7 @@ function crearItem(tipo) {
 }
 
 // ============================================
-// RECOGER DATOS - ACEPTA IMPORTE 0 O VACÍO
+// RECOGER DATOS
 // ============================================
 function recogerDatos() {
     const numeroInput = document.getElementById('numero_proforma').value.trim();
@@ -193,7 +192,7 @@ function recogerDatos() {
     datos.numero = numeroInput;
     datos.fecha = document.getElementById('fecha').value || new Date().toLocaleDateString('es-BO');
     
-    // Recoger servicios - importe vacío = 0
+    // Recoger servicios
     datos.servicios = [];
     document.querySelectorAll('#servicios-container .item-row').forEach(row => {
         const cantidad = parseInt(row.querySelector('.cantidad')?.value || 1);
@@ -208,7 +207,7 @@ function recogerDatos() {
         }
     });
     
-    // Recoger repuestos - importe vacío = 0
+    // Recoger repuestos
     datos.repuestos = [];
     if (repuestosVisible) {
         document.querySelectorAll('#repuestos-container .item-row').forEach(row => {
@@ -348,7 +347,7 @@ function numeroALetrasEntero(num) {
 }
 
 // ============================================
-// GENERAR HTML PROFORMA - FIRMA CENTRADA
+// GENERAR HTML PROFORMA - RUTAS SIN /recursos/
 // ============================================
 function generarHTMLProforma(datos) {
     const totalServicios = datos.servicios.reduce((s, i) => s + limpiarNumero(i.importe), 0);
@@ -452,7 +451,7 @@ function generarHTMLProforma(datos) {
         <div class="proforma-header">
             <div>
                 <div class="empresa">
-                    <img src="recursos/logo.png" style="height: 55px; width: 55px; object-fit: contain; margin-right: 12px;" onerror="this.style.display='none'">
+                    <img src="logo.png" style="height: 55px; width: 55px; object-fit: contain; margin-right: 12px;" onerror="this.style.display='none'">
                     <h1>MEJILLONES MOTORS</h1>
                 </div>
                 <p class="slogan">Mantenimiento preventivo y correctivo - Reparación de motores y electricidad en General - Chapa y pintura - Especialidad en vehículos siniestrados en general</p>
@@ -485,10 +484,9 @@ function generarHTMLProforma(datos) {
             <strong>Son:</strong> ${totalLetras}
         </div>
         
-        <!-- FIRMA CENTRADA -->
         <div style="display: flex; justify-content: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #e2e8f0; page-break-inside: avoid;">
             <div style="text-align: center; width: 300px;">
-                <img src="recursos/firma.png" style="max-height: 80px; max-width: 220px; object-fit: contain; display: block; margin: 0 auto -6px auto;" onerror="this.style.display='none'">
+                <img src="firma.png" style="max-height: 80px; max-width: 220px; object-fit: contain; display: block; margin: 0 auto -6px auto;" onerror="this.style.display='none'">
                 <p style="margin: 3px 0; font-size: 12px; color: #2d3748;">_________________________</p>
                 <p style="margin: 3px 0; font-size: 12px; color: #2d3748;"><strong>Grover Mejillones Ch.</strong></p>
                 <p style="margin: 3px 0; font-size: 11px; color: #718096;">Gerente Propietario</p>
@@ -615,7 +613,7 @@ function imprimirProforma() {
 }
 
 // ============================================
-// DESCARGAR PDF
+// DESCARGAR PDF - RUTAS SIN /recursos/
 // ============================================
 async function descargarPDF() {
     if (!proformaHTML) {
@@ -626,15 +624,15 @@ async function descargarPDF() {
     mostrarNotificacion('📥 Generando PDF...', 'info');
     
     try {
-        const logoBase64 = await convertirImagenABase64('recursos/logo.png');
-        const firmaBase64 = await convertirImagenABase64('recursos/firma.png');
+        const logoBase64 = await convertirImagenABase64('logo.png');
+        const firmaBase64 = await convertirImagenABase64('firma.png');
         
         let htmlFinal = proformaHTML;
         if (logoBase64) {
-            htmlFinal = htmlFinal.replace(/src="recursos\/logo\.png"/g, `src="${logoBase64}"`);
+            htmlFinal = htmlFinal.replace(/src="logo\.png"/g, `src="${logoBase64}"`);
         }
         if (firmaBase64) {
-            htmlFinal = htmlFinal.replace(/src="recursos\/firma\.png"/g, `src="${firmaBase64}"`);
+            htmlFinal = htmlFinal.replace(/src="firma\.png"/g, `src="${firmaBase64}"`);
         }
         
         const tempDiv = document.createElement('div');
