@@ -627,22 +627,87 @@ function imprimirProforma() {
 }
 
 // ============================================
-// DESCARGAR PDF - CORREGIDO (PROPORCIONES EXACTAS A4)
+// ASEGURAR LIBRERÍAS (FALLBACK SI CDN FALLA)
 // ============================================
-// Cambios respecto a la versión anterior:
-//  1. El <body> del iframe ya NO tiene padding. El padding va en un div interno (#contenido-pdf).
-//  2. html2canvas captura SOLO el div interno (#contenido-pdf), no el body.
-//  3. La altura del PDF se calcula con el ratio REAL del canvas (canvas.height / canvas.width),
-//     no con un ancho inventado. Esto elimina el estiramiento vertical.
+// Verifica que html2canvas y jsPDF estén cargados. Si no, los carga
+// dinámicamente desde un CDN alternativo (unpkg).
+function cargarScript(url) {
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = url;
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('No se pudo cargar: ' + url));
+        document.head.appendChild(s);
+    });
+}
+
+async function asegurarLibrerias() {
+    const tieneHtml2canvas = typeof html2canvas === 'function';
+    const tieneJsPDF = window.jspdf && typeof window.jspdf.jsPDF === 'function';
+    
+    if (tieneHtml2canvas && tieneJsPDF) return;
+    
+    const promesas = [];
+    
+    if (!tieneHtml2canvas) {
+        promesas.push(cargarScript('https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js'));
+    }
+    if (!tieneJsPDF) {
+        promesas.push(cargarScript('https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js'));
+    }
+    
+    await Promise.all(promesas);
+}
+
+// Espera con polling hasta que las librerías estén disponibles
+function esperarLibrerias(timeoutMs = 8000) {
+    return new Promise((resolve, reject) => {
+        const inicio = Date.now();
+        
+        const verificar = () => {
+            const tieneHtml2canvas = typeof html2canvas === 'function';
+            const tieneJsPDF = window.jspdf && typeof window.jspdf.jsPDF === 'function';
+            
+            if (tieneHtml2canvas && tieneJsPDF) {
+                resolve();
+                return;
+            }
+            
+            if (Date.now() - inicio > timeoutMs) {
+                reject(new Error('Las librerías no cargaron a tiempo. Verifique su conexión a internet.'));
+                return;
+            }
+            
+            setTimeout(verificar, 100);
+        };
+        
+        verificar();
+    });
+}
+
+// ============================================
+// DESCARGAR PDF - PROPORCIONES EXACTAS A4
+// ============================================
 async function descargarPDF() {
     if (!proformaHTML) {
         mostrarNotificacion('No hay proforma para descargar', 'warning');
         return;
     }
     
+    mostrarNotificacion('📥 Preparando generador de PDF...', 'info');
+    
+    // Asegurar que las librerías estén cargadas (con fallback a unpkg)
+    try {
+        await asegurarLibrerias();
+        await esperarLibrerias(8000);
+    } catch (e) {
+        mostrarNotificacion('⚠️ No se pudieron cargar las librerías PDF. Revise su conexión e intente de nuevo.', 'error');
+        return;
+    }
+    
     mostrarNotificacion('📥 Generando PDF...', 'info');
     
-    // Convertir imágenes a base64 (evita problemas de carga en el iframe)
+    // Convertir imágenes a base64
     const logoBase64 = await convertirImagenABase64('logo.png');
     const firmaBase64 = await convertirImagenABase64('firma.png');
     
@@ -695,7 +760,6 @@ async function descargarPDF() {
 <body>
 <div id="contenido-pdf">${htmlFinal}</div>
 <script>
-    // Se expone al padre para generar el canvas del div #contenido-pdf
     window.generarCanvas = function() {
         return new Promise(function(resolve, reject) {
             var elemento = document.getElementById('contenido-pdf');
@@ -757,7 +821,7 @@ async function descargarPDF() {
             let verificado = false;
             const timeout = setTimeout(() => {
                 if (!verificado) reject(new Error('Tiempo de espera agotado al cargar el iframe'));
-            }, 10000);
+            }, 12000);
             
             function verificar() {
                 try {
@@ -789,30 +853,24 @@ async function descargarPDF() {
             throw new Error('El canvas está vacío');
         }
         
-        if (!window.jspdf || !window.jspdf.jsPDF) {
-            throw new Error('jsPDF no está cargado en el navegador');
-        }
-        
-        // === CÁLCULO CORRECTO DE PROPORCIONES ===
+        // jsPDF ya garantizado por asegurarLibrerias()
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
         
         const pageWidthMM  = 210;
         const pageHeightMM = 297;
-        const marginMM     = 10;   // margen de la hoja en el PDF
+        const marginMM     = 10;
         
-        const contentWidthMM  = pageWidthMM  - (marginMM * 2); // 190mm
-        const contentHeightMM = pageHeightMM - (marginMM * 2); // 277mm
+        const contentWidthMM  = pageWidthMM  - (marginMM * 2);
+        const contentHeightMM = pageHeightMM - (marginMM * 2);
         
-        // ⚠️ CLAVE: la proporción real del canvas (sin inventar anchos)
+        // Proporción real del canvas (sin inventar anchos)
         const ratio = canvas.height / canvas.width;
         
-        // Ancho final en el PDF = 190mm (área útil A4)
-        // Alto final en el PDF = 190mm × ratio (mantiene proporción EXACTA)
         const imgWidthMM  = contentWidthMM;
         const imgHeightMM = contentWidthMM * ratio;
         
-        // Paginación manual con jsPDF
+        // Paginación manual
         let heightLeft = imgHeightMM;
         let position = marginMM;
         
