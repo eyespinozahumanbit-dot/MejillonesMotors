@@ -551,42 +551,24 @@ function nuevaProforma() {
 }
 
 // ============================================
-// IMPRIMIR - Genera un HTML de impresión completo (SIN depender del navegador)
+// IMPRIMIR
 // ============================================
 function generarHTMLImpresion() {
+    const baseURL = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+    const htmlConURLs = proformaHTML
+        .replace(/src="logo\.png"/g, `src="${baseURL}logo.png"`)
+        .replace(/src="firma\.png"/g, `src="${baseURL}firma.png"`);
+    
     return `<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pro-Forma ${numeroProforma}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html, body {
-            background: #ffffff;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            color: #1a2332;
-            line-height: 1.5;
-        }
-        
-        body {
-            padding: 15mm 15mm;
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto;
-        }
-        
-        /* ===== HEADER ===== */
-        .proforma-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding-bottom: 14px;
-            border-bottom: 3px double #1a3a6b;
-            margin-bottom: 16px;
-        }
-        
+        html, body { background: #ffffff; font-family: 'Segoe UI', Arial, sans-serif; color: #1a2332; line-height: 1.5; }
+        body { padding: 15mm; width: 210mm; min-height: 297mm; margin: 0 auto; }
+        .proforma-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 3px double #1a3a6b; margin-bottom: 16px; }
         .empresa { display: flex; align-items: center; }
         .empresa h1 { color: #1a3a6b; font-size: 22px; font-weight: 800; margin: 0; letter-spacing: 0.5px; }
         .slogan { color: #4a5568; font-style: italic; font-size: 11px; margin: 3px 0; max-width: 480px; }
@@ -595,70 +577,19 @@ function generarHTMLImpresion() {
         .header-right h2 { color: #1a3a6b; font-size: 18px; font-weight: 800; margin: 0; }
         .numero { font-size: 15px; color: #2a5298; font-weight: 700; margin-top: 4px; }
         .fecha-text { color: #4a5568; margin-top: 3px; font-size: 12px; }
-        
-        /* ===== INFO CLIENTE ===== */
-        .info-cliente {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 30px;
-            margin-bottom: 18px;
-            padding: 12px 16px;
-            background: #f7f9fc;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-        }
+        .info-cliente { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 30px; margin-bottom: 18px; padding: 12px 16px; background: #f7f9fc; border-radius: 6px; border: 1px solid #e2e8f0; }
         .info-cliente .item { display: flex; gap: 5px; font-size: 12px; }
         .info-cliente .label { font-weight: 600; color: #1a3a6b; white-space: nowrap; }
         .info-cliente .value { color: #2d3748; word-break: break-word; }
-        
-        /* ===== TABLAS ===== */
         table { width: 100%; border-collapse: collapse; }
         table th { padding: 8px 10px; text-align: left; font-weight: 600; font-size: 12px; }
         table td { padding: 6px 10px; text-align: left; font-size: 13px; }
-        
-        /* ===== TOTAL LETRAS ===== */
-        .total-letras {
-            background: #edf2f7;
-            padding: 10px 14px;
-            border-left: 4px solid #2a5298;
-            margin: 16px 0;
-            border-radius: 4px;
-            font-size: 13px;
-        }
+        .total-letras { background: #edf2f7; padding: 10px 14px; border-left: 4px solid #2a5298; margin: 16px 0; border-radius: 4px; font-size: 13px; }
         .total-letras strong { color: #1a3a6b; }
-        
-        /* ===== FIRMA ===== */
-        .firmas-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 2px solid #e2e8f0;
-            page-break-inside: avoid;
-        }
-        .firma { text-align: center; width: 300px; }
-        .firma p { margin: 3px 0; font-size: 12px; color: #2d3748; }
-        .firma .cargo { color: #718096; font-size: 11px; }
-        
-        /* ===== IMPRESIÓN ===== */
-        @page {
-            size: A4 portrait;
-            margin: 15mm;
-        }
-        
+        @page { size: A4 portrait; margin: 15mm; }
         @media print {
-            html, body {
-                width: auto;
-                min-height: auto;
-                padding: 0;
-            }
-            
-            body {
-                padding: 0;
-            }
-            
-            .no-print { display: none !important; }
-            
+            html, body { width: auto; min-height: auto; padding: 0; }
+            body { padding: 0; }
             .info-cliente { background: #f7f9fc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .total-letras { background: #edf2f7 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             table thead { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -667,14 +598,11 @@ function generarHTMLImpresion() {
     </style>
 </head>
 <body>
-    ${proformaHTML.replace(/<img src="logo\.png"/g, `<img src="${window.location.origin}${window.location.pathname.replace(/\/[^\/]*$/, '/')}logo.png"`).replace(/<img src="firma\.png"/g, `<img src="${window.location.origin}${window.location.pathname.replace(/\/[^\/]*$/, '/')}firma.png"`)}
+    ${htmlConURLs}
 </body>
 </html>`;
 }
 
-// ============================================
-// IMPRIMIR - Función principal
-// ============================================
 function imprimirProforma() {
     if (!proformaHTML) {
         mostrarNotificacion('No hay proforma para imprimir', 'warning');
@@ -690,7 +618,6 @@ function imprimirProforma() {
     ventana.document.write(generarHTMLImpresion());
     ventana.document.close();
     
-    // Esperar a que carguen las imágenes y luego imprimir
     ventana.onload = function() {
         setTimeout(() => {
             ventana.focus();
@@ -700,31 +627,246 @@ function imprimirProforma() {
 }
 
 // ============================================
-// DESCARGAR PDF
+// DESCARGAR PDF - CORREGIDO (PROPORCIONES EXACTAS A4)
 // ============================================
-function descargarPDF() {
+// Cambios respecto a la versión anterior:
+//  1. El <body> del iframe ya NO tiene padding. El padding va en un div interno (#contenido-pdf).
+//  2. html2canvas captura SOLO el div interno (#contenido-pdf), no el body.
+//  3. La altura del PDF se calcula con el ratio REAL del canvas (canvas.height / canvas.width),
+//     no con un ancho inventado. Esto elimina el estiramiento vertical.
+async function descargarPDF() {
     if (!proformaHTML) {
         mostrarNotificacion('No hay proforma para descargar', 'warning');
         return;
     }
     
-    mostrarNotificacion('📥 Abriendo vista de impresión... Selecciona "Guardar como PDF"', 'info');
+    mostrarNotificacion('📥 Generando PDF...', 'info');
     
-    const ventana = window.open('', '_blank');
-    if (!ventana) {
-        mostrarNotificacion('Permita ventanas emergentes para descargar el PDF', 'warning');
-        return;
+    // Convertir imágenes a base64 (evita problemas de carga en el iframe)
+    const logoBase64 = await convertirImagenABase64('logo.png');
+    const firmaBase64 = await convertirImagenABase64('firma.png');
+    
+    let htmlFinal = proformaHTML;
+    if (logoBase64) htmlFinal = htmlFinal.replace(/src="logo\.png"/g, `src="${logoBase64}"`);
+    if (firmaBase64) htmlFinal = htmlFinal.replace(/src="firma\.png"/g, `src="${firmaBase64}"`);
+    
+    // HTML del iframe: body SIN padding, div interno CON padding.
+    // El ancho del body = 794px (A4 exacto a 96 DPI).
+    const htmlIframe = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+        background: #ffffff;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: #1a2332;
+        line-height: 1.5;
+        width: 794px;
     }
-    
-    ventana.document.write(generarHTMLImpresion());
-    ventana.document.close();
-    
-    ventana.onload = function() {
-        setTimeout(() => {
-            ventana.focus();
-            ventana.print();
-        }, 600);
+    #contenido-pdf {
+        width: 794px;
+        box-sizing: border-box;
+        padding: 40px 45px;
+        background: #ffffff;
+    }
+    .proforma-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 3px double #1a3a6b; margin-bottom: 16px; }
+    .empresa { display: flex; align-items: center; }
+    .empresa h1 { color: #1a3a6b; font-size: 22px; font-weight: 800; margin: 0; letter-spacing: 0.5px; }
+    .slogan { color: #4a5568; font-style: italic; font-size: 11px; margin: 3px 0; max-width: 480px; }
+    .direccion { color: #718096; font-size: 11px; margin: 1px 0; }
+    .header-right { text-align: right; flex-shrink: 0; margin-left: 20px; }
+    .header-right h2 { color: #1a3a6b; font-size: 18px; font-weight: 800; margin: 0; }
+    .numero { font-size: 15px; color: #2a5298; font-weight: 700; margin-top: 4px; }
+    .fecha-text { color: #4a5568; margin-top: 3px; font-size: 12px; }
+    .info-cliente { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 30px; margin-bottom: 18px; padding: 12px 16px; background: #f7f9fc; border-radius: 6px; border: 1px solid #e2e8f0; }
+    .info-cliente .item { display: flex; gap: 5px; font-size: 12px; }
+    .info-cliente .label { font-weight: 600; color: #1a3a6b; white-space: nowrap; }
+    .info-cliente .value { color: #2d3748; word-break: break-word; }
+    table { width: 100%; border-collapse: collapse; }
+    table th { padding: 8px 10px; text-align: left; font-weight: 600; font-size: 12px; }
+    table td { padding: 6px 10px; text-align: left; font-size: 13px; }
+    .total-letras { background: #edf2f7; padding: 10px 14px; border-left: 4px solid #2a5298; margin: 16px 0; border-radius: 4px; font-size: 13px; }
+    .total-letras strong { color: #1a3a6b; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
+</head>
+<body>
+<div id="contenido-pdf">${htmlFinal}</div>
+<script>
+    // Se expone al padre para generar el canvas del div #contenido-pdf
+    window.generarCanvas = function() {
+        return new Promise(function(resolve, reject) {
+            var elemento = document.getElementById('contenido-pdf');
+            if (!elemento) { reject(new Error('No se encontró el contenido')); return; }
+            
+            var intentos = 0;
+            var maxIntentos = 50;
+            
+            function verificar() {
+                intentos++;
+                var todasListas = true;
+                elemento.querySelectorAll('img').forEach(function(img) {
+                    if (!img.complete || img.naturalHeight === 0) todasListas = false;
+                });
+                
+                if (todasListas || intentos > maxIntentos) {
+                    setTimeout(function() {
+                        html2canvas(elemento, {
+                            scale: 2,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff',
+                            logging: false,
+                            width: 794,
+                            windowWidth: 794
+                        }).then(function(canvas) {
+                            resolve(canvas);
+                        }).catch(function(err) {
+                            reject(err);
+                        });
+                    }, 400);
+                } else {
+                    setTimeout(verificar, 100);
+                }
+            }
+            
+            verificar();
+        });
     };
+<\/script>
+</body>
+</html>`;
+    
+    let iframe = null;
+    try {
+        // Crear iframe oculto
+        iframe = document.createElement('iframe');
+        iframe.style.cssText = 'position:fixed;left:-99999px;top:0;width:794px;height:2000px;border:0;';
+        document.body.appendChild(iframe);
+        
+        // Escribir el HTML en el iframe
+        const idoc = iframe.contentDocument || iframe.contentWindow.document;
+        idoc.open();
+        idoc.write(htmlIframe);
+        idoc.close();
+        
+        // Esperar a que el iframe cargue completamente (incluyendo html2canvas)
+        await new Promise((resolve, reject) => {
+            let verificado = false;
+            const timeout = setTimeout(() => {
+                if (!verificado) reject(new Error('Tiempo de espera agotado al cargar el iframe'));
+            }, 10000);
+            
+            function verificar() {
+                try {
+                    const win = iframe.contentWindow;
+                    if (win && win.generarCanvas && win.document.readyState === 'complete') {
+                        verificado = true;
+                        clearTimeout(timeout);
+                        resolve();
+                    } else {
+                        setTimeout(verificar, 100);
+                    }
+                } catch (e) {
+                    setTimeout(verificar, 100);
+                }
+            }
+            verificar();
+        });
+        
+        // Esperar un poco más para asegurar que html2canvas esté listo
+        await new Promise(r => setTimeout(r, 500));
+        
+        // Generar canvas (dentro del iframe)
+        const canvas = await iframe.contentWindow.generarCanvas();
+        if (!canvas) throw new Error('No se pudo generar el canvas');
+        
+        // Verificar que el canvas tenga contenido real
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        if (!imgData || imgData === 'data:,' || imgData.length < 5000) {
+            throw new Error('El canvas está vacío');
+        }
+        
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+            throw new Error('jsPDF no está cargado en el navegador');
+        }
+        
+        // === CÁLCULO CORRECTO DE PROPORCIONES ===
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+        
+        const pageWidthMM  = 210;
+        const pageHeightMM = 297;
+        const marginMM     = 10;   // margen de la hoja en el PDF
+        
+        const contentWidthMM  = pageWidthMM  - (marginMM * 2); // 190mm
+        const contentHeightMM = pageHeightMM - (marginMM * 2); // 277mm
+        
+        // ⚠️ CLAVE: la proporción real del canvas (sin inventar anchos)
+        const ratio = canvas.height / canvas.width;
+        
+        // Ancho final en el PDF = 190mm (área útil A4)
+        // Alto final en el PDF = 190mm × ratio (mantiene proporción EXACTA)
+        const imgWidthMM  = contentWidthMM;
+        const imgHeightMM = contentWidthMM * ratio;
+        
+        // Paginación manual con jsPDF
+        let heightLeft = imgHeightMM;
+        let position = marginMM;
+        
+        pdf.addImage(imgData, 'JPEG', marginMM, position, imgWidthMM, imgHeightMM);
+        heightLeft -= contentHeightMM;
+        
+        while (heightLeft > 0) {
+            position = marginMM - (imgHeightMM - heightLeft);
+            pdf.addPage();
+            pdf.addImage(imgData, 'JPEG', marginMM, position, imgWidthMM, imgHeightMM);
+            heightLeft -= contentHeightMM;
+        }
+        
+        pdf.save(`ProForma_${numeroProforma || 'MejillonesMotors'}.pdf`);
+        
+        mostrarNotificacion('✅ PDF descargado correctamente', 'success');
+        
+    } catch (error) {
+        console.error('Error al generar PDF:', error);
+        mostrarNotificacion('Error al generar el PDF: ' + error.message, 'error');
+    } finally {
+        if (iframe && iframe.parentNode) {
+            document.body.removeChild(iframe);
+        }
+    }
+}
+
+// ============================================
+// Convertir imagen a Base64
+// ============================================
+function convertirImagenABase64(ruta) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = function() {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const dataURL = canvas.toDataURL('image/png');
+                resolve(dataURL);
+            } catch (e) {
+                console.warn('No se pudo convertir imagen:', ruta, e);
+                resolve(null);
+            }
+        };
+        img.onerror = function() {
+            console.warn('No se pudo cargar imagen:', ruta);
+            resolve(null);
+        };
+        img.src = ruta;
+    });
 }
 
 // ============================================
